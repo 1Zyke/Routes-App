@@ -1,29 +1,30 @@
 # Cálculo del promedio de un conjunto de números
 # Pedir al usuario que ingrese la cantidad de números
+
 import heapq as hq, folium, webbrowser, PySimpleGUI as sg, sys
 
 # Definir la función que calcula la ruta más corta con el algoritmo de Dijkstra
 def dijkstra(graph, source, destination):
-    node_data={}
+    node_data = {}
     for node in graph:
-        node_data[node]=dict(cost=float('inf'),pred=[])
+        node_data[node] = {'cost': float('inf'), 'pred': []}
     node_data[source]['cost'] = 0
     visited = set()
     current_node = source
-    for _ in range(5):
+    while current_node != destination:
         if current_node not in visited:
             visited.add(current_node)
-            min_heap = []
             for j in graph[current_node]:
                 if j not in visited:
                     cost = node_data[current_node]['cost'] + graph[current_node][j]
                     if cost < node_data[j]['cost']:
                         node_data[j]['cost'] = cost
                         node_data[j]['pred'] = [*node_data[current_node]['pred'], current_node]
-                    hq.heappush(min_heap,(node_data[j]['cost'],j))
-        hq.heapify(min_heap)
-        current_node = min_heap[0][1]
-    return node_data[destination]['cost'],[*node_data[destination]['pred'], destination]
+        unvisited_nodes = {node: node_data[node]['cost'] for node in node_data if node not in visited}
+        if not unvisited_nodes:
+            break
+        current_node = min(unvisited_nodes, key=unvisited_nodes.get)
+    return node_data[destination]['cost'], [*node_data[destination]['pred'], destination]
 
 # Definir el grafo
 grafica = {
